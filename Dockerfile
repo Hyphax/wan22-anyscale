@@ -1,7 +1,14 @@
 FROM anyscale/ray:2.44.0-slim-py312-cu125
 
+# become root so apt can install
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+
 # system deps
-RUN apt-get update && apt-get install -y git ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/lib/apt/lists/partial && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends git ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
 
 # app code
 WORKDIR /app
@@ -17,5 +24,11 @@ RUN huggingface-cli download Wan-AI/Wan2.2-TI2V-5B --local-dir /models/Wan2.2-TI
 # serve app
 COPY serve_app.py /app/serve_app.py
 ENV HF_HUB_ENABLE_HF_TRANSFER=1
+
+# (optional) drop back to the default non-root user if you want:
+# USER ray
+
 EXPOSE 8000
 CMD ["python", "-m", "serve_app"]
+
+
