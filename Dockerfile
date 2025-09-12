@@ -29,7 +29,6 @@ RUN pip install --no-cache-dir -r /app/Wan2.2/requirements.txt \
     && pip install --no-cache-dir "huggingface_hub[cli]" fastapi uvicorn accelerate
 
 # preload 5B weights to avoid cold start
-RUN huggingface-cli download Wan-AI/Wan2.2-TI2V-5B --local-dir /models/Wan2.2-TI2V-5B
 
 # api
 COPY serve_app.py /app/serve_app.py
@@ -37,3 +36,4 @@ ENV HF_HUB_ENABLE_HF_TRANSFER=1
 
 EXPOSE 8000
 CMD ["python", "-m", "serve_app"]
+
